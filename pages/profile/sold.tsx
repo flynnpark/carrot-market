@@ -6,7 +6,7 @@ const Sold: NextPage = () => {
       {[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1].map((_, i) => (
         <div
           key={i}
-          className="flex px-4  border-b pb-5 cursor-pointer justify-between"
+          className="flex px-4 border-b pb-5 cursor-pointer justify-between"
         >
           <div className="flex space-x-4">
             <div className="w-20 h-20 bg-gray-400 rounded-md" />
@@ -19,7 +19,7 @@ const Sold: NextPage = () => {
             </div>
           </div>
           <div className="flex space-x-2 items-end justify-end">
-            <div className="flex space-x-0.5 items-center text-sm  text-gray-600">
+            <div className="flex space-x-0.5 items-center text-sm text-gray-600">
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -36,7 +36,7 @@ const Sold: NextPage = () => {
               </svg>
               <span>1</span>
             </div>
-            <div className="flex space-x-0.5 items-center text-sm  text-gray-600">
+            <div className="flex space-x-0.5 items-center text-sm text-gray-600">
               <svg
                 className="w-4 h-4"
                 fill="none"
