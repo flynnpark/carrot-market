@@ -21,14 +21,9 @@ export default function Layout({
   };
   return (
     <div>
-      <div
-        className={classnames(
-          !canGoBack ? 'justify-center' : '',
-          'bg-white w-full max-w-lg text-lg px-6 font-medium py-3 fixed text-gray-700 border-b top-0 flex items-center'
-        )}
-      >
+      <div className="bg-white w-full h-12 max-w-xl justify-center text-lg px-10 font-medium fixed text-gray-800 border-b top-0 flex items-center">
         {canGoBack ? (
-          <button onClick={handleClick}>
+          <button onClick={handleClick} className="absolute left-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -43,15 +38,26 @@ export default function Layout({
             </svg>
           </button>
         ) : null}
-        {title ? <span>{title}</span> : null}
+        {title ? (
+          <span className={classnames(canGoBack ? 'mx-auto' : '')}>
+            {title}
+          </span>
+        ) : null}
       </div>
       <div className={classnames('pt-12', hasTabBar ? 'pb-[6.5rem]' : '')}>
         {children}
       </div>
       {hasTabBar ? (
-        <nav className="bg-white w-full max-w-lg text-gray-800 border-t fixed bottom-0 px-6 pb-5 pt-3 flex justify-between items-center space-x-4">
+        <nav className="bg-white w-full max-w-xl text-gray-700 border-t fixed bottom-0 px-2 pb-5 pt-3 flex justify-between items-center text-sm">
           <Link href="/">
-            <a className="flex flex-col items-center space-y-2 w-full">
+            <a
+              className={classnames(
+                'flex flex-col items-center space-y-2 w-full',
+                router.pathname === '/'
+                  ? 'text-orange-500'
+                  : 'hover:text-gray-500 transition-colors'
+              )}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -70,7 +76,14 @@ export default function Layout({
             </a>
           </Link>
           <Link href="/community">
-            <a className="flex flex-col items-center space-y-2 w-full">
+            <a
+              className={classnames(
+                'flex flex-col items-center space-y-2 w-full',
+                router.pathname === '/community'
+                  ? 'text-orange-500'
+                  : 'hover:text-gray-500 transition-colors'
+              )}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -89,7 +102,14 @@ export default function Layout({
             </a>
           </Link>
           <Link href="/chats">
-            <a className="flex flex-col items-center space-y-2 w-full">
+            <a
+              className={classnames(
+                'flex flex-col items-center space-y-2 w-full',
+                router.pathname === '/chats'
+                  ? 'text-orange-500'
+                  : 'hover:text-gray-500 transition-colors'
+              )}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -108,7 +128,14 @@ export default function Layout({
             </a>
           </Link>
           <Link href="/live">
-            <a className="flex flex-col items-center space-y-2 w-full">
+            <a
+              className={classnames(
+                'flex flex-col items-center space-y-2 w-full',
+                router.pathname === '/live'
+                  ? 'text-orange-500'
+                  : 'hover:text-gray-500 transition-colors'
+              )}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -127,7 +154,14 @@ export default function Layout({
             </a>
           </Link>
           <Link href="/profile">
-            <a className="flex flex-col items-center space-y-2 w-full">
+            <a
+              className={classnames(
+                'flex flex-col items-center space-y-2 w-full',
+                router.pathname === '/profile'
+                  ? 'text-orange-500'
+                  : 'hover:text-gray-500 transition-colors'
+              )}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
