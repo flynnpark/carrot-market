@@ -7,12 +7,14 @@ interface LoginForm {
   username: string;
   password: string;
   email: string;
+  errors?: string;
 }
 
 export default function Forms() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<LoginForm>({
     mode: 'onChange',
@@ -20,6 +22,7 @@ export default function Forms() {
 
   const onValid = (data: LoginForm) => {
     console.log('I am valid');
+    setError('errors', { message: 'API is offline.' });
   };
   const onInvalid = (errors: FieldErrors) => {
     console.log(errors);
@@ -57,6 +60,7 @@ export default function Forms() {
         {...register('password', { required: 'Password is required' })}
       />
       <input type="submit" value="Create Account" />
+      {errors.errors?.message}
     </form>
   );
 }
