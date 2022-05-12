@@ -1,4 +1,4 @@
-import { classnames } from '../libs/utils';
+import { classnames } from '../libs/client/utils';
 
 interface ButtonProps {
   large?: boolean;
