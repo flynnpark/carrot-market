@@ -11,6 +11,7 @@ interface EnterForm {
 }
 
 const Enter: NextPage = () => {
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { register, watch, handleSubmit, reset } = useForm<EnterForm>();
   const [method, setMethod] = useState<'email' | 'phone'>('email');
   const onEmailClick = () => {
@@ -22,7 +23,16 @@ const Enter: NextPage = () => {
     setMethod('phone');
   };
   const onValid = (data: EnterForm) => {
-    console.log(data);
+    setIsSubmitting(true);
+    fetch('/api/users/enter', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }).then(() => {
+      setIsSubmitting(false);
+    });
   };
 
   return (
@@ -65,6 +75,7 @@ const Enter: NextPage = () => {
               name="email"
               label="Email address"
               type="email"
+              required={true}
               register={register('email', { required: true })}
             />
           ) : null}
@@ -74,12 +85,17 @@ const Enter: NextPage = () => {
               label="Phone number"
               type="number"
               kind="phone"
+              required={true}
               register={register('phone', { required: true })}
             />
           ) : null}
-          {method === 'email' ? <Button text={'Get login link'} /> : null}
+          {method === 'email' ? (
+            <Button text={isSubmitting ? 'Processing...' : 'Get login link'} />
+          ) : null}
           {method === 'phone' ? (
-            <Button text={'Get one-time password'} />
+            <Button
+              text={isSubmitting ? 'Processing...' : 'Get one-time password'}
+            />
           ) : null}
         </form>
 
