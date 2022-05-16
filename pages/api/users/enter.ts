@@ -1,7 +1,12 @@
 import client from 'libs/server/client';
 import withHandler, { ResponseType } from 'libs/server/withHandler';
 import { NextApiRequest, NextApiResponse } from 'next';
+import twilio from 'twilio';
 
+const twilioClient = twilio(
+  process.env.TWILIO_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
 interface EnterRequest extends NextApiRequest {
   body: {
     phone: string;
@@ -33,6 +38,15 @@ async function handler(req: EnterRequest, res: NextApiResponse<ResponseType>) {
       },
     },
   });
+
+  if (phone) {
+    const message = await twilioClient.messages.create({
+      messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
+      to: process.env.MY_PHONE!,
+      body: `Your login token is ${tokenPayload}`,
+    });
+    console.log(message);
+  }
 
   return res.status(200).json({
     success: true,
