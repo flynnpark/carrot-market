@@ -1,5 +1,5 @@
 import client from 'libs/server/client';
-import withHandler from 'libs/server/withHandler';
+import withHandler, { ResponseType } from 'libs/server/withHandler';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 interface EnterRequest extends NextApiRequest {
@@ -9,28 +9,34 @@ interface EnterRequest extends NextApiRequest {
   };
 }
 
-async function handler(req: EnterRequest, res: NextApiResponse) {
+async function handler(req: EnterRequest, res: NextApiResponse<ResponseType>) {
   const { phone, email } = req.body;
-  const payload = phone ? { phone } : { email };
+  const enterPayload = phone ? { phone } : email ? { email } : null;
+  if (!enterPayload) {
+    return res.status(400).json({ success: false });
+  }
 
+  const tokenPayload = String(Math.floor(100000 + Math.random() * 900000));
   const token = await client.token.create({
     data: {
-      payload: '1234',
+      payload: tokenPayload,
       user: {
         connectOrCreate: {
           where: {
-            ...payload,
+            ...enterPayload,
           },
           create: {
             name: 'Anonymous',
-            ...payload,
+            ...enterPayload,
           },
         },
       },
     },
   });
 
-  res.status(200).end();
+  return res.status(200).json({
+    success: true,
+  });
 }
 
 export default withHandler('POST', handler);
