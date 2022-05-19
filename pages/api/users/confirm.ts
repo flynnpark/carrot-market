@@ -1,16 +1,29 @@
-import withHandler, { ResponseType } from 'libs/server/withHandler';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { withIronSessionApiRoute } from 'iron-session/next';
+import withHandler, { ResponseType } from 'libs/server/withHandler';
+import client from 'libs/server/client';
 
-interface EnterRequest extends NextApiRequest {
-  body: {
-    token: string;
-  };
-}
-
-async function handler(req: EnterRequest, res: NextApiResponse<ResponseType>) {
+async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<ResponseType>
+) {
   const { token } = req.body;
-  console.log(token);
+  const exists = await client.token.findUnique({
+    where: {
+      payload: token,
+    },
+  });
+  if (!exists) {
+    res.status(404).end();
+  }
+  req.session.user = {
+    id: exists?.userId,
+  };
+  await req.session.save();
   res.status(200).end();
 }
 
-export default withHandler('POST', handler);
+export default withIronSessionApiRoute(withHandler('POST', handler), {
+  cookieName: 'carrotsession',
+  password: '8c01eeb2-52b4-4aac-8757-734ba09bc6f9',
+});
