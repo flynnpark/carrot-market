@@ -4,12 +4,12 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import twilio from 'twilio';
 import mail from '@sendgrid/mail';
 
-const twilioClient = twilio(
-  process.env.TWILIO_SID,
-  process.env.TWILIO_AUTH_TOKEN
-);
+// const twilioClient = twilio(
+//   process.env.TWILIO_SID,
+//   process.env.TWILIO_AUTH_TOKEN
+// );
 
-mail.setApiKey(process.env.SENDGRID_API_KEY!);
+// mail.setApiKey(process.env.SENDGRID_API_KEY!);
 
 interface EnterRequest extends NextApiRequest {
   body: {
@@ -44,20 +44,18 @@ async function handler(req: EnterRequest, res: NextApiResponse<ResponseType>) {
   });
 
   if (phone) {
-    const message = await twilioClient.messages.create({
-      messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
-      to: process.env.MY_PHONE!,
-      body: `Your login token is ${tokenPayload}`,
-    });
-    console.log(message);
+    // const message = await twilioClient.messages.create({
+    //   messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
+    //   to: process.env.MY_PHONE!,
+    //   body: `Your login token is ${tokenPayload}`,
+    // });
   } else if (email) {
-    const email = await mail.send({
-      from: process.env.EMAIL_SENDER!,
-      to: process.env.EMAIL_SENDER,
-      subject: 'Login token',
-      text: `Your login token is ${tokenPayload}`,
-    });
-    console.log(email);
+    // const email = await mail.send({
+    //   from: process.env.EMAIL_SENDER!,
+    //   to: process.env.EMAIL_SENDER,
+    //   subject: 'Login token',
+    //   text: `Your login token is ${tokenPayload}`,
+    // });
   }
 
   return res.status(200).json({
