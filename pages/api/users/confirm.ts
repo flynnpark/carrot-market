@@ -25,9 +25,11 @@ async function handler(
       userId: foundToken.userId,
     },
   });
-  res.json({
+  return res.json({
     success: true,
   });
 }
 
-export default withApiSession(withHandler('POST', handler));
+export default withApiSession(
+  withHandler({ method: 'POST', handler, isPrivate: false })
+);

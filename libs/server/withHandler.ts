@@ -7,10 +7,20 @@ export interface ResponseType {
   [key: string]: any;
 }
 
-export default function withHandler(
-  method: RequestMethod,
-  handlerFn: (req: NextApiRequest, res: NextApiResponse) => void
-) {
+interface ConfigType {
+  method: RequestMethod;
+  handler: (
+    req: NextApiRequest,
+    res: NextApiResponse<ResponseType>
+  ) => Promise<void | NextApiResponse> | void | NextApiResponse;
+  isPrivate?: boolean;
+}
+
+export default function withHandler({
+  method,
+  handler,
+  isPrivate = true,
+}: ConfigType) {
   return async function (
     req: NextApiRequest,
     res: NextApiResponse
@@ -18,8 +28,11 @@ export default function withHandler(
     if (req.method !== method) {
       return res.status(405).end();
     }
+    if (isPrivate && !req.session.user) {
+      return res.status(401).json({ success: false });
+    }
     try {
-      await handlerFn(req, res);
+      await handler(req, res);
     } catch (error) {
       console.log(error);
       return res.status(500).json({ success: false, message: error });
