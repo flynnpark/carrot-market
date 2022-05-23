@@ -10,7 +10,7 @@ const Home: NextPage = () => {
   return (
     <Layout title="홈" hasTabBar>
       <Head>
-        <title>Home</title>
+        <title>홈</title>
       </Head>
       <div className="flex flex-col space-y-5 divide-y">
         {[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1].map((_, i) => (
