@@ -16,7 +16,7 @@ export default function Item({
   id,
 }: ItemProps) {
   return (
-    <Link href={`/items/${id}`}>
+    <Link href={`/products/${id}`}>
       <a className="flex px-4 pt-5 cursor-pointer justify-between">
         <div className="flex space-x-4">
           <div className="w-20 h-20 bg-gray-400 rounded-md" />
@@ -43,7 +43,7 @@ export default function Item({
             </svg>
             <span>{hearts}</span>
           </div>
-          <div className="flex space-x-0.5 items-center text-sm  text-gray-600">
+          <div className="flex space-x-0.5 -center text-sm  text-gray-600">
             <svg
               className="w-4 h-4"
               fill="none"
