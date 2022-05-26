@@ -63,4 +63,4 @@ async function handler(req: EnterRequest, res: NextApiResponse<ResponseType>) {
   });
 }
 
-export default withHandler({ method: 'POST', handler, isPrivate: false });
+export default withHandler({ methods: ['POST'], handler, isPrivate: false });

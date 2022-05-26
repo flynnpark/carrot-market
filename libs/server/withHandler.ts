@@ -8,7 +8,7 @@ export interface ResponseType {
 }
 
 interface ConfigType {
-  method: RequestMethod;
+  methods: RequestMethod[];
   handler: (
     req: NextApiRequest,
     res: NextApiResponse<ResponseType>
@@ -17,7 +17,7 @@ interface ConfigType {
 }
 
 export default function withHandler({
-  method,
+  methods,
   handler,
   isPrivate = true,
 }: ConfigType) {
@@ -25,7 +25,7 @@ export default function withHandler({
     req: NextApiRequest,
     res: NextApiResponse
   ): Promise<any> {
-    if (req.method !== method) {
+    if (req.method && !methods.includes(req.method as RequestMethod)) {
       return res.status(405).end();
     }
     if (isPrivate && !req.session.user) {
