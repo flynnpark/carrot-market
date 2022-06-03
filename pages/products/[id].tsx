@@ -26,13 +26,17 @@ interface ItemDetailResponse {
 const ItemDetail: NextPage = () => {
   const router = useRouter();
 
-  const { data } = useSWR<ItemDetailResponse>(
+  const { data, mutate } = useSWR<ItemDetailResponse>(
     router.query.id ? `/api/products/${router.query.id}` : null
   );
 
   const [toggleFav] = useMutation(`/api/products/${router.query.id}/fav`);
   const onFavClick = () => {
     toggleFav({});
+
+    if (!data) return;
+
+    mutate({ ...data, isLiked: !data.isLiked }, false);
   };
 
   return (
@@ -75,7 +79,7 @@ const ItemDetail: NextPage = () => {
                 {data?.isLiked ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
+                    className="h-6 w-6"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
