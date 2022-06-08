@@ -5,6 +5,8 @@ import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import { Answer, Post, User } from '@prisma/client';
 import Link from 'next/link';
+import useMutation from 'libs/client/useMutation';
+import { classnames } from 'libs/client/utils';
 
 interface AnswerWithUser extends Answer {
   user: User;
@@ -22,15 +24,36 @@ interface PostDetails extends Post {
 interface CommunityPost {
   success: boolean;
   post?: PostDetails;
+  isAgree?: boolean;
 }
 
 const CommunityPostDetail: NextPage = () => {
   const router = useRouter();
-  const { data, error } = useSWR<CommunityPost>(
+  const { data, mutate } = useSWR<CommunityPost>(
     router.query.id ? `/api/posts/${router.query.id}` : null
   );
+  const [agree] = useMutation(`/api/posts/${router.query.id}/agrees`);
 
-  console.log(data);
+  const onAgreeClick = () => {
+    if (!data?.post) return;
+    mutate(
+      {
+        ...data,
+        post: {
+          ...data.post,
+          _count: {
+            ...data.post._count,
+            agrees: data.isAgree
+              ? data?.post?._count?.agrees - 1
+              : data?.post?._count?.agrees + 1,
+          },
+        },
+        isAgree: !data.isAgree,
+      },
+      false
+    );
+    agree({});
+  };
 
   return (
     <Layout canGoBack={true}>
@@ -57,7 +80,13 @@ const CommunityPostDetail: NextPage = () => {
             {data?.post?.content}
           </div>
           <div className="flex px-4 space-x-5 mt-3 text-gray-700 py-2.5 border-t border-b-[2px]  w-full">
-            <span className="flex space-x-2 items-center text-sm">
+            <button
+              className={classnames(
+                'flex space-x-2 items-center text-sm',
+                data?.isAgree ? 'text-teal-400' : ''
+              )}
+              onClick={onAgreeClick}
+            >
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -73,7 +102,7 @@ const CommunityPostDetail: NextPage = () => {
                 ></path>
               </svg>
               <span>궁금해요 {data?.post?._count.agrees}</span>
-            </span>
+            </button>
             <span className="flex space-x-2 items-center text-sm">
               <svg
                 className="w-4 h-4"
