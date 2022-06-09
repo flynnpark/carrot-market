@@ -7,6 +7,8 @@ import { Answer, Post, User } from '@prisma/client';
 import Link from 'next/link';
 import useMutation from 'libs/client/useMutation';
 import { classnames } from 'libs/client/utils';
+import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
 
 interface AnswerWithUser extends Answer {
   user: User;
@@ -27,12 +29,26 @@ interface CommunityPost {
   isAgree?: boolean;
 }
 
+interface AnswerForm {
+  content: string;
+}
+
+interface AnswerResponse {
+  success: boolean;
+  answer: Answer;
+}
+
 const CommunityPostDetail: NextPage = () => {
   const router = useRouter();
+  const { register, handleSubmit, reset } = useForm<AnswerForm>();
   const { data, mutate } = useSWR<CommunityPost>(
     router.query.id ? `/api/posts/${router.query.id}` : null
   );
-  const [agree] = useMutation(`/api/posts/${router.query.id}/agrees`);
+  const [agree, { loading: agreeLoading }] = useMutation(
+    `/api/posts/${router.query.id}/agrees`
+  );
+  const [sendAnswer, { data: answerData, loading: answerLoading }] =
+    useMutation<AnswerResponse>(`/api/posts/${router.query.id}/answers`);
 
   const onAgreeClick = () => {
     if (!data?.post) return;
@@ -52,8 +68,21 @@ const CommunityPostDetail: NextPage = () => {
       },
       false
     );
-    agree({});
+    if (!agreeLoading) {
+      agree({});
+    }
   };
+
+  const onValid = (form: AnswerForm) => {
+    if (answerLoading) return;
+    sendAnswer(form);
+  };
+
+  useEffect(() => {
+    if (answerData?.success) {
+      reset();
+    }
+  }, [answerData, reset]);
 
   return (
     <Layout canGoBack={true}>
@@ -138,16 +167,23 @@ const CommunityPostDetail: NextPage = () => {
             </div>
           ))}
         </div>
-        <div className="px-4">
+        <form className="px-4" onSubmit={handleSubmit(onValid)}>
           <TextArea
             name="description"
             placeholder="Answer this question!"
             required
+            register={register('content', { required: true, minLength: 5 })}
           />
-          <button className="mt-2 w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none ">
-            Reply
+          <button
+            className={classnames(
+              'mt-2 w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none',
+              answerLoading ? 'disabled:opacity-80' : ''
+            )}
+            disabled={answerLoading}
+          >
+            {answerLoading ? 'Loading...' : 'Reply'}
           </button>
-        </div>
+        </form>
       </div>
     </Layout>
   );
