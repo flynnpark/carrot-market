@@ -81,8 +81,9 @@ const CommunityPostDetail: NextPage = () => {
   useEffect(() => {
     if (answerData?.success) {
       reset();
+      mutate();
     }
-  }, [answerData, reset]);
+  }, [answerData, mutate, reset]);
 
   return (
     <Layout canGoBack={true}>
