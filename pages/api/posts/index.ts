@@ -31,13 +31,15 @@ async function handler(
     });
   } else {
     const {
-      body: { content },
+      body: { content, lat, lon },
       session: { user },
     } = req;
 
     const post = await client.post.create({
       data: {
         content,
+        lat,
+        lon,
         user: {
           connect: {
             id: user?.id,

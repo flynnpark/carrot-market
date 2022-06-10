@@ -66,6 +66,8 @@ model Post {
   updatedAt DateTime @updatedAt
   userId    Int
   content   String   @db.MediumText
+  lat       Float?
+  lon       Float?
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   answers   Answer[]
   agrees    Agree[]
