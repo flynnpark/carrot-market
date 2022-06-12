@@ -5,6 +5,7 @@ import Layout from 'components/layout';
 import useSWR from 'swr';
 import { Post, User } from '@prisma/client';
 import { pseudoRandomBytes } from 'crypto';
+import useCoords from 'libs/client/useCoords';
 
 interface PostWithUser extends Post {
   user: User;
@@ -20,7 +21,8 @@ interface PostsResponse {
 }
 
 const Community: NextPage = () => {
-  const { data } = useSWR<PostsResponse>('/api/posts');
+  const coords = useCoords();
+  const { data } = useSWR<PostsResponse>(['/api/posts', coords]);
 
   return (
     <Layout hasTabBar={true} title="동네생활">
