@@ -25,7 +25,6 @@ const Write: NextPage = () => {
   const [post, { loading, data }] = useMutation<WriteResponse>('/api/posts');
   const onValid = (data: WriteForm) => {
     if (loading) return;
-    console.log(coords);
     post({ ...data, ...coords });
   };
 

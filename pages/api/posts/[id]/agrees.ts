@@ -11,7 +11,7 @@ async function handler(
     query: { id },
     session: { user },
   } = req;
-  console.log('What the...', id, user);
+
   const alreadyExists = await client.agree.findFirst({
     where: {
       userId: user?.id,
@@ -21,7 +21,7 @@ async function handler(
       id: true,
     },
   });
-  console.log(alreadyExists);
+
   if (alreadyExists) {
     await client.agree.delete({
       where: {
