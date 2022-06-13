@@ -108,6 +108,7 @@ model Review {
   updatedAt    DateTime @updatedAt
   writtenForId Int
   writtenById  Int
+  rating       Int
   content      String   @db.MediumText
   writtenFor   User     @relation(name: "receivedReviews", fields: [writtenForId], references: [id], onDelete: Cascade)
   writtenBy    User     @relation(name: "writtenReviews", fields: [writtenById], references: [id], onDelete: Cascade)
