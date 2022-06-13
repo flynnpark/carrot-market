@@ -12,20 +12,23 @@ async function handler(
       query: { lat, lon },
     } = req;
 
-    const latNumber = parseFloat(lat.toString());
-    const lonNumber = parseFloat(lon.toString());
+    const latNumber = Number(lat);
+    const lonNumber = Number(lon);
 
     const posts = await client.post.findMany({
-      where: {
-        lat: {
-          gte: latNumber - 0.01,
-          lte: latNumber + 0.01,
-        },
-        lon: {
-          gte: lonNumber - 0.01,
-          lte: lonNumber + 0.01,
-        },
-      },
+      where:
+        latNumber && lonNumber
+          ? {
+              lat: {
+                gte: latNumber - 0.01,
+                lte: latNumber + 0.01,
+              },
+              lon: {
+                gte: lonNumber - 0.01,
+                lte: lonNumber + 0.01,
+              },
+            }
+          : {},
       include: {
         user: {
           select: {

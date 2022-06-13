@@ -22,6 +22,7 @@ interface PostsResponse {
 
 const Community: NextPage = () => {
   const coords = useCoords();
+
   const { data } = useSWR<PostsResponse>(['/api/posts', coords]);
 
   return (
