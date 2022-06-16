@@ -11,12 +11,20 @@ async function handler(
     session: { user },
   } = req;
 
-  const sales = await client.sale.findMany({
+  const sales = await client.favorite.findMany({
     where: {
       userId: user?.id,
     },
     include: {
-      product: true,
+      product: {
+        include: {
+          _count: {
+            select: {
+              favorites: true,
+            },
+          },
+        },
+      },
     },
   });
 
