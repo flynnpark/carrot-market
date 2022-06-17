@@ -69,7 +69,7 @@ const Enter: NextPage = () => {
               required={true}
               register={tokenRegister('token', { required: true })}
             />
-            <Button text={tokenLoading ? 'Processing...' : 'Confirm Token'} />
+            <Button text="Confirm Token" loading={loading} />
           </form>
         ) : (
           <>
@@ -126,12 +126,10 @@ const Enter: NextPage = () => {
                 />
               ) : null}
               {method === 'email' ? (
-                <Button text={loading ? 'Processing...' : 'Get login link'} />
+                <Button text="Get login link" loading={loading} />
               ) : null}
               {method === 'phone' ? (
-                <Button
-                  text={loading ? 'Processing...' : 'Get one-time password'}
-                />
+                <Button text="Get one-time password" loading={loading} />
               ) : null}
             </form>
           </>

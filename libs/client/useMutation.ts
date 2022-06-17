@@ -8,7 +8,10 @@ interface UseMutationState<T> {
 
 type UseMutationResult<T> = [(data: any) => void, UseMutationState<T>];
 
-export default function useMutation<T>(endpoint: string): UseMutationResult<T> {
+export default function useMutation<T>(
+  endpoint: string,
+  method: 'POST' | 'PATCH' = 'POST'
+): UseMutationResult<T> {
   const [state, setState] = useState<UseMutationState<T>>({
     loading: false,
     data: undefined,
@@ -19,7 +22,7 @@ export default function useMutation<T>(endpoint: string): UseMutationResult<T> {
     setState((prev) => ({ ...prev, loading: true }));
     try {
       const response = await fetch(endpoint, {
-        method: 'POST',
+        method,
         headers: {
           'Content-Type': 'application/json',
         },

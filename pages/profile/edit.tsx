@@ -5,11 +5,18 @@ import Layout from 'components/layout';
 import useUser from 'libs/client/useUser';
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
+import useMutation from 'libs/client/useMutation';
 
 interface EditProfileForm {
+  name?: string;
   email?: string;
   phone?: string;
   formErrors?: string;
+}
+
+interface EditProfileResponse {
+  success: boolean;
+  message?: string;
 }
 
 const EditProfile: NextPage = () => {
@@ -21,16 +28,30 @@ const EditProfile: NextPage = () => {
     setError,
     formState: { errors },
   } = useForm<EditProfileForm>();
+  const [editProfile, { data, loading }] = useMutation<EditProfileResponse>(
+    '/api/users/me',
+    'PATCH'
+  );
 
   useEffect(() => {
+    if (user?.name) setValue('name', user?.name);
     if (user?.email) setValue('email', user?.email);
     if (user?.phone) setValue('phone', user?.phone);
   }, [user, setValue]);
 
-  const onValid = ({ email, phone }: EditProfileForm) => {
-    if (email === '' || phone === '') {
-      setError('formErrors', { message: 'Email or Phone number are required' });
+  useEffect(() => {
+    if (!data?.success && data?.message) {
+      setError('formErrors', { message: data.message });
     }
+  }, [data, setError]);
+  const onValid = ({ email, phone }: EditProfileForm) => {
+    if (loading) return;
+    if (email === '' || phone === '') {
+      return setError('formErrors', {
+        message: 'Email or Phone number are required',
+      });
+    }
+    editProfile({ email, phone });
   };
 
   return (
@@ -53,6 +74,13 @@ const EditProfile: NextPage = () => {
         </div>
         <Input
           required={false}
+          label="Name"
+          name="name"
+          type="name"
+          register={register('name')}
+        />
+        <Input
+          required={false}
           label="Email address"
           name="email"
           type="email"
@@ -71,7 +99,7 @@ const EditProfile: NextPage = () => {
             {errors.formErrors.message}
           </span>
         ) : null}
-        <Button text="Update profile" />
+        <Button text="Update profile" loading={loading} />
       </form>
     </Layout>
   );

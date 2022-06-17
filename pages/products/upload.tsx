@@ -79,7 +79,7 @@ const Upload: NextPage = () => {
           name="description"
           label="Description"
         />
-        <Button text={loading ? 'Loading...' : 'Upload item'} />
+        <Button text="Upload item" loading={loading} />
       </form>
     </Layout>
   );
