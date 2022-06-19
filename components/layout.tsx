@@ -127,11 +127,11 @@ export default function Layout({
               <span>메세지</span>
             </a>
           </Link>
-          <Link href="/live">
+          <Link href="/streams">
             <a
               className={classnames(
                 'flex flex-col items-center space-y-2 w-full',
-                router.pathname === '/live'
+                router.pathname === '/streams'
                   ? 'text-orange-500'
                   : 'hover:text-gray-500 transition-colors'
               )}
