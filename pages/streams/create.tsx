@@ -11,7 +11,7 @@ import { Stream } from '@prisma/client';
 
 interface CreateForm {
   name: string;
-  dscrtipion: string;
+  description: string;
   price: number;
 }
 
@@ -24,7 +24,7 @@ const Create: NextPage = () => {
   const router = useRouter();
   const { register, handleSubmit } = useForm<CreateForm>();
   const [createStream, { loading, data }] =
-    useMutation<CreateResponse>('api/stream');
+    useMutation<CreateResponse>('/api/streams');
 
   const onValid = (form: CreateForm) => {
     if (loading) return;
@@ -54,12 +54,12 @@ const Create: NextPage = () => {
           name="price"
           type="text"
           kind="price"
-          register={register('price', { required: true })}
+          register={register('price', { required: true, valueAsNumber: true })}
         />
         <TextArea
           name="description"
           label="Description"
-          register={register('dscrtipion')}
+          register={register('description')}
         />
         <Button loading={loading} text="Go stream" />
       </form>
