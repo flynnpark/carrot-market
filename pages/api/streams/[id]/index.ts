@@ -18,6 +18,21 @@ async function handler(
       where: {
         id: parseInt(id.toString(), 10),
       },
+      include: {
+        messages: {
+          select: {
+            id: true,
+            message: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                avatar: true,
+              },
+            },
+          },
+        },
+      },
     });
     res.json({
       success: true,

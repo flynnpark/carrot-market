@@ -1,34 +1,63 @@
 import type { NextPage } from 'next';
 import Layout from 'components/layout';
 import Message from 'components/message';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { useRouter } from 'next/router';
-import { Stream } from '@prisma/client';
+import { Message as MessageModel, Stream } from '@prisma/client';
 import { useForm } from 'react-hook-form';
 import useMutation from 'libs/client/useMutation';
+import useUser from 'libs/client/useUser';
+import { useEffect } from 'react';
+
+interface StreamWithMessages extends Stream {
+  messages: {
+    id: number;
+    message: string;
+    user: {
+      id: number;
+      name: string;
+      avatar: string | null;
+    };
+  }[];
+}
 
 interface StreamResponse {
   success: boolean;
-  stream: Stream;
+  stream: StreamWithMessages;
 }
 
 interface MessageForm {
   message: string;
 }
 
-const Stream: NextPage = () => {
+interface SendMessageResponse {
+  success: boolean;
+  message: MessageModel;
+}
+
+const StreamDetail: NextPage = () => {
+  const { user } = useUser();
   const router = useRouter();
-  const { data } = useSWR<StreamResponse>(`/api/streams/${router.query.id}`);
-  const { register, handleSubmit, reset } = useForm<MessageForm>();
-  const [sendMessage, { loading, data: sendMessageData }] = useMutation(
-    `/api/streams/${router.query.id}/messages`
+  const { data, mutate } = useSWR<StreamResponse>(
+    `/api/streams/${router.query.id}`
   );
+  const { register, handleSubmit, reset } = useForm<MessageForm>();
+  const [sendMessage, { loading, data: sendMessageData }] =
+    useMutation<SendMessageResponse>(
+      `/api/streams/${router.query.id}/messages`
+    );
 
   const onValid = (form: MessageForm) => {
     if (loading) return;
     sendMessage(form);
     reset();
   };
+
+  useEffect(() => {
+    if (sendMessageData?.success) {
+      mutate();
+    }
+  }, [mutate, sendMessageData]);
 
   return (
     <Layout canGoBack>
@@ -46,9 +75,13 @@ const Stream: NextPage = () => {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Live Chat</h2>
           <div className="py-10 pb-16 h-[50vh] overflow-y-scroll  px-4 space-y-4">
-            <Message message="Hi how much are you selling them for?" />
-            <Message message="I want ￦20,000" reversed />
-            <Message message="미쳤어" />
+            {data?.stream.messages.map(({ id, message, user: sendUser }) => (
+              <Message
+                key={id}
+                message={message}
+                reversed={sendUser.id === user?.id}
+              />
+            ))}
           </div>
           <div className="fixed py-2 bg-white  bottom-0 inset-x-0">
             <form
@@ -73,4 +106,4 @@ const Stream: NextPage = () => {
   );
 };
 
-export default Stream;
+export default StreamDetail;
