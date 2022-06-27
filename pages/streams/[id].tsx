@@ -39,7 +39,10 @@ const StreamDetail: NextPage = () => {
   const { user } = useUser();
   const router = useRouter();
   const { data, mutate } = useSWR<StreamResponse>(
-    `/api/streams/${router.query.id}`
+    `/api/streams/${router.query.id}`,
+    {
+      refreshInterval: 1000,
+    }
   );
   const { register, handleSubmit, reset } = useForm<MessageForm>();
   const [sendMessage, { loading, data: sendMessageData }] =
@@ -50,14 +53,23 @@ const StreamDetail: NextPage = () => {
   const onValid = (form: MessageForm) => {
     if (loading) return;
     sendMessage(form);
+    mutate(
+      (prev) =>
+        prev &&
+        ({
+          ...prev,
+          stream: {
+            ...prev.stream,
+            messages: [
+              ...prev.stream.messages,
+              { id: Date.now(), message: form.message, user },
+            ],
+          },
+        } as any),
+      false
+    );
     reset();
   };
-
-  useEffect(() => {
-    if (sendMessageData?.success) {
-      mutate();
-    }
-  }, [mutate, sendMessageData]);
 
   return (
     <Layout canGoBack>
