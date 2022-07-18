@@ -19,7 +19,7 @@ interface ProductsResponse {
 }
 
 const Home: NextPage = () => {
-  const { user, isLoading } = useUser();
+  const { user } = useUser();
   const { data } = useSWR<ProductsResponse>('/api/products');
 
   return (
@@ -28,15 +28,16 @@ const Home: NextPage = () => {
         <title>홈</title>
       </Head>
       <div className="flex flex-col space-y-5 divide-y">
-        {data?.products.map((product, i) => (
-          <Item
-            id={product.id}
-            key={product.id}
-            title={product.name}
-            price={product.price}
-            hearts={product._count.favorites}
-          />
-        ))}
+        {user &&
+          data?.products.map((product, i) => (
+            <Item
+              id={product.id}
+              key={product.id}
+              title={product.name}
+              price={product.price}
+              hearts={product._count.favorites}
+            />
+          ))}
         <FloatingButton href="/products/upload">
           <svg
             className="h-6 w-6"
